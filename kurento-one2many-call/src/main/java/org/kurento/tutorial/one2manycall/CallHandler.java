@@ -58,13 +58,15 @@ public class CallHandler extends TextWebSocketHandler {
   private MediaPipeline pipeline;
   private UserSession presenterUserSession;
 
+  // 소켓에다 메세지 보낼 때 사용
   @Override
   public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
     JsonObject jsonMessage = gson.fromJson(message.getPayload(), JsonObject.class);
     log.debug("Incoming message from session '{}': {}", session.getId(), jsonMessage);
 
+    // id가 무엇인지 구분
     switch (jsonMessage.get("id").getAsString()) {
-      case "presenter":
+      case "presenter": // presenter면 kurento에게 미디어 파이프라인
         try {
           presenter(session, jsonMessage);
         } catch (Throwable t) {
@@ -121,11 +123,16 @@ public class CallHandler extends TextWebSocketHandler {
     if (presenterUserSession == null) {
       presenterUserSession = new UserSession(session);
 
+      // 파이프 생성
       pipeline = kurento.createMediaPipeline();
-      presenterUserSession.setWebRtcEndpoint(new WebRtcEndpoint.Builder(pipeline).build());
+      // userRTCEndpoint을 써줘야 dataChannel을 이용할 수 있다.
+      presenterUserSession.setWebRtcEndpoint(new WebRtcEndpoint.Builder(pipeline).useDataChannels().build());
+//      presenterUserSession.setWebRtcEndpoint(new WebRtcEndpoint.Builder(pipeline).build());
 
       WebRtcEndpoint presenterWebRtc = presenterUserSession.getWebRtcEndpoint();
 
+      // 실제 Presenter와 Kurento가 생성한 미디어 파이프라인 사이에 연결
+      // addIceCandidateFoundListener를 사용하여 Candidate를 찾는 과정이 이루여 짐
       presenterWebRtc.addIceCandidateFoundListener(new EventListener<IceCandidateFoundEvent>() {
 
         @Override
@@ -188,7 +195,9 @@ public class CallHandler extends TextWebSocketHandler {
       UserSession viewer = new UserSession(session);
       viewers.put(session.getId(), viewer);
 
-      WebRtcEndpoint nextWebRtc = new WebRtcEndpoint.Builder(pipeline).build();
+      // 이미 만들어진 파이프라인을 가져와서 webRtcEndPoint를 만들어 준다.
+      WebRtcEndpoint nextWebRtc = new WebRtcEndpoint.Builder(pipeline).useDataChannels().build();
+//      WebRtcEndpoint nextWebRtc = new WebRtcEndpoint.Builder(pipeline).build();
 
       nextWebRtc.addIceCandidateFoundListener(new EventListener<IceCandidateFoundEvent>() {
 
@@ -247,6 +256,7 @@ public class CallHandler extends TextWebSocketHandler {
     }
   }
 
+  // Connection이 Close 됐을 때
   @Override
   public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
     stop(session);

@@ -45,6 +45,7 @@ import com.google.gson.JsonObject;
  * @author Boni Garcia (bgarcia@gsyc.es)
  * @since 5.0.0
  */
+// TextWebSocketHandler에서 WebSocket 요청을 처리하도록 구현
 public class CallHandler extends TextWebSocketHandler {
 
   private static final Logger log = LoggerFactory.getLogger(CallHandler.class);

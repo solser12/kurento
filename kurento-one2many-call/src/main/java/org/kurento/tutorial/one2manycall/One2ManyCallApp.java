@@ -32,6 +32,10 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
  * @author Boni Garcia (bgarcia@gsyc.es)
  * @since 5.0.0
  */
+
+// KurentoClient는 Spring Bean으로 인스턴스화
+// Bean은 애플리케이션에 미디어 기능을 추가하는데 사용되는 Kurento Media Pipelines 를 만드는 데 사용
+// localhost에서 8888 포트에서 대기하는 Kurento Media Server와 연결하기 위해 WebSocket 사용
 @SpringBootApplication
 @EnableWebSocket
 public class One2ManyCallApp implements WebSocketConfigurer {
@@ -53,6 +57,7 @@ public class One2ManyCallApp implements WebSocketConfigurer {
     return container;
   }
 
+  // WebSocket를 등록 (wss:// + localhost + /call)
   @Override
   public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
     registry.addHandler(callHandler(), "/call");

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="kurento-show-data-channel" />
+        <module name="kurento-send-data-channel" />
+        <module name="kurento-one2one-call" />
+        <module name="kurento-platedetector" />
+        <module name="kurento-crowddetector" />
+        <module name="kurento-one2many-call" />
+        <module name="kurento-hello-world" />
+        <module name="kurento-chroma" />
+        <module name="kurento-pointerdetector" />
+        <module name="kurento-rtp-receiver" />
+        <module name="kurento-player" />
+        <module name="kurento-metadata-example" />
+        <module name="kurento-one2one-call-advanced" />
+        <module name="kurento-one2one-call-recording" />
+        <module name="kurento-group-call" />
+        <module name="kurento-magic-mirror" />
+        <module name="kurento-hello-world-recording" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="kurento-chroma" target="1.8" />
+      <module name="kurento-crowddetector" target="1.8" />
+      <module name="kurento-group-call" target="1.8" />
+      <module name="kurento-hello-world" target="1.8" />
+      <module name="kurento-hello-world-recording" target="1.8" />
+      <module name="kurento-magic-mirror" target="1.8" />
+      <module name="kurento-metadata-example" target="1.8" />
+      <module name="kurento-one2many-call" target="1.8" />
+      <module name="kurento-one2one-call" target="1.8" />
+      <module name="kurento-one2one-call-advanced" target="1.8" />
+      <module name="kurento-one2one-call-recording" target="1.8" />
+      <module name="kurento-platedetector" target="1.8" />
+      <module name="kurento-player" target="1.8" />
+      <module name="kurento-pointerdetector" target="1.8" />
+      <module name="kurento-rtp-receiver" target="1.8" />
+      <module name="kurento-send-data-channel" target="1.8" />
+      <module name="kurento-show-data-channel" target="1.8" />
+      <module name="kurento-tutorial" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="kurento-chroma" options="-source 1.8 -target 1.8" />
+      <module name="kurento-crowddetector" options="-source 1.8 -target 1.8" />
+      <module name="kurento-group-call" options="-source 1.8 -target 1.8" />
+      <module name="kurento-hello-world" options="-source 1.8 -target 1.8" />
+      <module name="kurento-hello-world-recording" options="-source 1.8 -target 1.8" />
+      <module name="kurento-magic-mirror" options="-source 1.8 -target 1.8" />
+      <module name="kurento-metadata-example" options="-source 1.8 -target 1.8" />
+      <module name="kurento-one2many-call" options="-source 1.8 -target 1.8" />
+      <module name="kurento-one2one-call" options="-source 1.8 -target 1.8" />
+      <module name="kurento-one2one-call-advanced" options="-source 1.8 -target 1.8" />
+      <module name="kurento-one2one-call-recording" options="-source 1.8 -target 1.8" />
+      <module name="kurento-platedetector" options="-source 1.8 -target 1.8" />
+      <module name="kurento-player" options="-source 1.8 -target 1.8" />
+      <module name="kurento-pointerdetector" options="-source 1.8 -target 1.8" />
+      <module name="kurento-rtp-receiver" options="-source 1.8 -target 1.8" />
+      <module name="kurento-send-data-channel" options="-source 1.8 -target 1.8" />
+      <module name="kurento-show-data-channel" options="-source 1.8 -target 1.8" />
+    </option>
+  </component>
+</project>

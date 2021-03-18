@@ -67,6 +67,7 @@ public class CallHandler extends TextWebSocketHandler {
     switch (jsonMessage.get("id").getAsString()) {
       case "presenter": // presenter면 kurento에게 미디어 파이프라인
         try {
+          // presenter로 이동
           presenter(session, jsonMessage);
         } catch (Throwable t) {
           handleErrorResponse(t, session, "presenterResponse");
@@ -127,10 +128,13 @@ public class CallHandler extends TextWebSocketHandler {
    */
   private synchronized void presenter(final WebSocketSession session, JsonObject jsonMessage)
       throws IOException {
-    if (presenterUserSession == null) {
+//    if (presenterUserSession == null) {
+      // UserSession이 null 이면 생성
+      log.info("presenter - new UserSession");
       presenterUserSession = new UserSession(session);
 
       // 파이프 생성
+      log.info("presenter - Create Media Pipeline");
       pipeline = kurento.createMediaPipeline();
 
       // userRTCEndpoint을 써줘야 dataChannel을 이용할 수 있다.
@@ -171,14 +175,15 @@ public class CallHandler extends TextWebSocketHandler {
       }
       presenterWebRtc.gatherCandidates();
 
-    } else {
-      JsonObject response = new JsonObject();
-      response.addProperty("id", "presenterResponse");
-      response.addProperty("response", "rejected");
-      response.addProperty("message",
-          "Another user is currently acting as sender. Try again later ...");
-      session.sendMessage(new TextMessage(response.toString()));
-    }
+//    } else {
+//      // UserSession이 이미 생성 되어 있으면
+//      JsonObject response = new JsonObject();
+//      response.addProperty("id", "presenterResponse");
+//      response.addProperty("response", "rejected");
+//      response.addProperty("message",
+//          "Another user is currently acting as sender. Try again later ...");
+//      session.sendMessage(new TextMessage(response.toString()));
+//    }
   }
 
   /* viewr

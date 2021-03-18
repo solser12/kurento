@@ -130,7 +130,7 @@ public class CallHandler extends TextWebSocketHandler {
       throws IOException {
 //    if (presenterUserSession == null) {
       // UserSession이 null 이면 생성
-      log.info("presenter - new UserSession");
+      log.info("presenter - new UserSession {}", session.getId());
       presenterUserSession = new UserSession(session);
 
       // 파이프 생성

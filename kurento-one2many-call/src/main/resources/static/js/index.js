@@ -34,23 +34,23 @@ ws.onmessage = function(message) {
 	console.info('Received message: ' + message.data);
 
 	switch (parsedMessage.id) {
-	case 'presenterResponse':
-		presenterResponse(parsedMessage);
-		break;
-	case 'viewerResponse':
-		viewerResponse(parsedMessage);
-		break;
-	case 'iceCandidate':
-		webRtcPeer.addIceCandidate(parsedMessage.candidate, function(error) {
-			if (error)
-				return console.error('Error adding candidate: ' + error);
-		});
-		break;
-	case 'stopCommunication':
-		dispose();
-		break;
-	default:
-		console.error('Unrecognized message', parsedMessage);
+		case 'presenterResponse':
+			presenterResponse(parsedMessage);
+			break;
+		case 'viewerResponse':
+			viewerResponse(parsedMessage);
+			break;
+		case 'iceCandidate':
+			webRtcPeer.addIceCandidate(parsedMessage.candidate, function(error) {
+				if (error)
+					return console.error('Error adding candidate: ' + error);
+			});
+			break;
+		case 'stopCommunication':
+			dispose();
+			break;
+		default:
+			console.error('Unrecognized message', parsedMessage);
 	}
 }
 
@@ -89,12 +89,12 @@ function presenter() {
 			onicecandidate : onIceCandidate
 		}
 		webRtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options,
-				function(error) {
-					if (error) {
-						return console.error(error);
-					}
-					webRtcPeer.generateOffer(onOfferPresenter);
-				});
+			function(error) {
+				if (error) {
+					return console.error(error);
+				}
+				webRtcPeer.generateOffer(onOfferPresenter);
+			});
 
 		enableStopButton();
 	}
@@ -120,12 +120,12 @@ function viewer() {
 			onicecandidate : onIceCandidate
 		}
 		webRtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly(options,
-				function(error) {
-					if (error) {
-						return console.error(error);
-					}
-					this.generateOffer(onOfferViewer);
-				});
+			function(error) {
+				if (error) {
+					return console.error(error);
+				}
+				this.generateOffer(onOfferViewer);
+			});
 
 		enableStopButton();
 	}

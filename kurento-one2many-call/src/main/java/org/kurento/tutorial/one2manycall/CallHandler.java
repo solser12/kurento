@@ -31,6 +31,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -51,6 +52,7 @@ public class CallHandler extends TextWebSocketHandler {
   private KurentoClient kurento;
 
   private MediaPipeline pipeline;
+  private HashMap<String, UserSession> userSessionHashMap = new HashMap<>();
   private UserSession presenterUserSession;
 
 
@@ -66,6 +68,7 @@ public class CallHandler extends TextWebSocketHandler {
     // id가 무엇인지 구분
     switch (jsonMessage.get("id").getAsString()) {
       case "presenter": // presenter면 kurento에게 미디어 파이프라인
+        log.info("handleTextMessage - send data : presenter");
         try {
           // presenter로 이동
           presenter(session, jsonMessage);
@@ -75,12 +78,14 @@ public class CallHandler extends TextWebSocketHandler {
         break;
       case "viewer":
         try {
+          log.info("handleTextMessage - send data : viewer");
           viewer(session, jsonMessage);
         } catch (Throwable t) {
           handleErrorResponse(t, session, "viewerResponse");
         }
         break;
       case "onIceCandidate": {
+        log.info("handleTextMessage - send data : onIceCandidate");
         JsonObject candidate = jsonMessage.get("candidate").getAsJsonObject();
 
         UserSession user = null;
@@ -100,6 +105,7 @@ public class CallHandler extends TextWebSocketHandler {
         break;
       }
       case "stop":
+        log.info("handleTextMessage - send data : stop");
         stop(session);
         break;
       default:
@@ -129,13 +135,13 @@ public class CallHandler extends TextWebSocketHandler {
   private synchronized void presenter(final WebSocketSession session, JsonObject jsonMessage)
       throws IOException {
 //    if (presenterUserSession == null) {
-      // UserSession이 null 이면 생성
-      log.info("presenter - new UserSession {}", session.getId());
-      presenterUserSession = new UserSession(session);
+      // UserSession 생성
+      log.info("presenter - new UserSession : {}", session.getId());
+      UserSession presenterUserSession = new UserSession(session);
 
       // 파이프 생성
       log.info("presenter - Create Media Pipeline");
-      pipeline = kurento.createMediaPipeline();
+      MediaPipeline pipeline = kurento.createMediaPipeline();
 
       // userRTCEndpoint을 써줘야 dataChannel을 이용할 수 있다.
       presenterUserSession.setWebRtcEndpoint(new WebRtcEndpoint.Builder(pipeline).useDataChannels().build());
@@ -175,6 +181,7 @@ public class CallHandler extends TextWebSocketHandler {
       }
       presenterWebRtc.gatherCandidates();
 
+      userSessionHashMap.put(presenterUserSession.getSession().getId(), presenterUserSession);
 //    } else {
 //      // UserSession이 이미 생성 되어 있으면
 //      JsonObject response = new JsonObject();
@@ -186,7 +193,7 @@ public class CallHandler extends TextWebSocketHandler {
 //    }
   }
 
-  /* viewr
+  /* viwer
    * =================================================
    */
   private synchronized void viewer(final WebSocketSession session, JsonObject jsonMessage)

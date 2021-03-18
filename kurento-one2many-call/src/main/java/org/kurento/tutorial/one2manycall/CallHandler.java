@@ -32,6 +32,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -182,6 +183,10 @@ public class CallHandler extends TextWebSocketHandler {
       presenterWebRtc.gatherCandidates();
 
       userSessionHashMap.put(presenterUserSession.getSession().getId(), presenterUserSession);
+      log.info("=============== TOTAL SESSION (" + userSessionHashMap.size() + ") ================");
+      for (Map.Entry<String, UserSession> entry : userSessionHashMap.entrySet()) {
+        log.info("session Id : {}", entry.getKey());
+      }
 //    } else {
 //      // UserSession이 이미 생성 되어 있으면
 //      JsonObject response = new JsonObject();

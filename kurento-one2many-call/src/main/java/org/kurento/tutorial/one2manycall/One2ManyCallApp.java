@@ -25,6 +25,8 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Video call 1 to N demo (main).
@@ -39,6 +41,8 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
 @SpringBootApplication
 @EnableWebSocket
 public class One2ManyCallApp implements WebSocketConfigurer {
+
+  public static final Logger log = LoggerFactory.getLogger(One2ManyCallApp.class);
 
   @Bean
   public CallHandler callHandler() {
@@ -64,6 +68,7 @@ public class One2ManyCallApp implements WebSocketConfigurer {
   }
 
   public static void main(String[] args) throws Exception {
+    log.info("==========START===========");
     SpringApplication.run(One2ManyCallApp.class, args);
   }
 

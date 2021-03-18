@@ -208,7 +208,7 @@ function showSpinner() {
 function hideSpinner() {
 	for (var i = 0; i < arguments.length; i++) {
 		arguments[i].src = '';
-		arguments[i].poster = './img/webrtc.png';
+		arguments[i].poster = './img/ssafy-logo.png';
 		arguments[i].style.background = '';
 	}
 }

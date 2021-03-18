@@ -17,15 +17,10 @@
 
 package org.kurento.tutorial.one2manycall;
 
-import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.kurento.client.EventListener;
-import org.kurento.client.IceCandidate;
-import org.kurento.client.IceCandidateFoundEvent;
-import org.kurento.client.KurentoClient;
-import org.kurento.client.MediaPipeline;
-import org.kurento.client.WebRtcEndpoint;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import org.kurento.client.*;
 import org.kurento.jsonrpc.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +30,8 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
+import java.io.IOException;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Protocol handler for 1 to N video call communication.
@@ -59,7 +53,11 @@ public class CallHandler extends TextWebSocketHandler {
   private MediaPipeline pipeline;
   private UserSession presenterUserSession;
 
-  // 소켓에다 메세지 보낼 때 사용
+
+  /* handleTextMessage
+   * =================================================
+   * 소켓에다 메세지 보낼 때 사용
+   */
   @Override
   public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
     JsonObject jsonMessage = gson.fromJson(message.getPayload(), JsonObject.class);
@@ -108,6 +106,10 @@ public class CallHandler extends TextWebSocketHandler {
     }
   }
 
+
+  /* handleErrorResponse
+   * =================================================
+   */
   private void handleErrorResponse(Throwable throwable, WebSocketSession session, String responseId)
       throws IOException {
     stop(session);
@@ -119,6 +121,10 @@ public class CallHandler extends TextWebSocketHandler {
     session.sendMessage(new TextMessage(response.toString()));
   }
 
+
+  /* presenter
+   * =================================================
+   */
   private synchronized void presenter(final WebSocketSession session, JsonObject jsonMessage)
       throws IOException {
     if (presenterUserSession == null) {
@@ -126,6 +132,7 @@ public class CallHandler extends TextWebSocketHandler {
 
       // 파이프 생성
       pipeline = kurento.createMediaPipeline();
+
       // userRTCEndpoint을 써줘야 dataChannel을 이용할 수 있다.
       presenterUserSession.setWebRtcEndpoint(new WebRtcEndpoint.Builder(pipeline).useDataChannels().build());
 //      presenterUserSession.setWebRtcEndpoint(new WebRtcEndpoint.Builder(pipeline).build());
@@ -174,6 +181,9 @@ public class CallHandler extends TextWebSocketHandler {
     }
   }
 
+  /* viewr
+   * =================================================
+   */
   private synchronized void viewer(final WebSocketSession session, JsonObject jsonMessage)
       throws IOException {
     if (presenterUserSession == null || presenterUserSession.getWebRtcEndpoint() == null) {
@@ -234,6 +244,10 @@ public class CallHandler extends TextWebSocketHandler {
     }
   }
 
+
+  /* stop
+   * =================================================
+   */
   private synchronized void stop(WebSocketSession session) throws IOException {
     String sessionId = session.getId();
     if (presenterUserSession != null && presenterUserSession.getSession().getId().equals(sessionId)) {
@@ -257,7 +271,10 @@ public class CallHandler extends TextWebSocketHandler {
     }
   }
 
-  // Connection이 Close 됐을 때
+  /* afterConnectionClosed
+   * =================================================
+   * Connection이 Close 됐을 때
+   */
   @Override
   public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
     stop(session);

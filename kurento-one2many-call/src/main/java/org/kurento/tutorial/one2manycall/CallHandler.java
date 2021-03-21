@@ -52,9 +52,9 @@ public class CallHandler extends TextWebSocketHandler {
   @Autowired
   private KurentoClient kurento;
 
-  private MediaPipeline pipeline;
+//  private MediaPipeline pipeline;
   private HashMap<String, UserSession> userSessionHashMap = new HashMap<>();
-  private UserSession presenterUserSession;
+//  private UserSession presenterUserSession;
 
 
   /* handleTextMessage
@@ -187,6 +187,7 @@ public class CallHandler extends TextWebSocketHandler {
       for (Map.Entry<String, UserSession> entry : userSessionHashMap.entrySet()) {
         log.info("session Id : {}", entry.getKey());
       }
+      log.info("======================================================");
 //    } else {
 //      // UserSession이 이미 생성 되어 있으면
 //      JsonObject response = new JsonObject();
@@ -203,7 +204,11 @@ public class CallHandler extends TextWebSocketHandler {
    */
   private synchronized void viewer(final WebSocketSession session, JsonObject jsonMessage)
       throws IOException {
-    if (presenterUserSession == null || presenterUserSession.getWebRtcEndpoint() == null) {
+    String joinId = jsonMessage.get("joinId").getAsString();
+    UserSession userSession = userSessionHashMap.get(joinId);
+
+    // 원하는 방이 없음
+    if (userSession == null || userSession.getWebRtcEndpoint() == null) {
       JsonObject response = new JsonObject();
       response.addProperty("id", "viewerResponse");
       response.addProperty("response", "rejected");
@@ -211,6 +216,7 @@ public class CallHandler extends TextWebSocketHandler {
           "No active sender now. Become sender or . Try again later ...");
       session.sendMessage(new TextMessage(response.toString()));
     } else {
+      // 이미 접속중인 경우
       if (viewers.containsKey(session.getId())) {
         JsonObject response = new JsonObject();
         response.addProperty("id", "viewerResponse");
@@ -223,6 +229,7 @@ public class CallHandler extends TextWebSocketHandler {
       UserSession viewer = new UserSession(session);
       viewers.put(session.getId(), viewer);
 
+      MediaPipeline pipeline = userSession.getWebRtcEndpoint().getMediaPipeline();
       // 이미 만들어진 파이프라인을 가져와서 webRtcEndPoint를 만들어 준다.
       WebRtcEndpoint nextWebRtc = new WebRtcEndpoint.Builder(pipeline).useDataChannels().build();
 //      WebRtcEndpoint nextWebRtc = new WebRtcEndpoint.Builder(pipeline).build();
@@ -245,7 +252,7 @@ public class CallHandler extends TextWebSocketHandler {
       });
 
       viewer.setWebRtcEndpoint(nextWebRtc);
-      presenterUserSession.getWebRtcEndpoint().connect(nextWebRtc);
+      userSession.getWebRtcEndpoint().connect(nextWebRtc);
       String sdpOffer = jsonMessage.getAsJsonPrimitive("sdpOffer").getAsString();
       String sdpAnswer = nextWebRtc.processOffer(sdpOffer);
 

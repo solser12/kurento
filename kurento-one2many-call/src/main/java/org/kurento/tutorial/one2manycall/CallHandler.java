@@ -224,12 +224,15 @@ public class CallHandler extends TextWebSocketHandler {
    */
   private synchronized void viewer(final WebSocketSession session, JsonObject jsonMessage)
       throws IOException {
-    // joinId 추출
-    String joinId = jsonMessage.get("joinId").getAsString();
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
+
+    // joinId 추출
+    System.out.print("joinId : ");
+    String joinId = br.readLine();//jsonMessage.get("joinId").getAsString();
     // 참가하고 싶은 presenterSession 추출
     UserSession presenterUserSession = presenters.get(joinId);
-
+    br.close();
     // 보려는 presenter가 없을 때
     if (presenterUserSession == null || presenterUserSession.getWebRtcEndpoint() == null) {
       JsonObject response = new JsonObject();

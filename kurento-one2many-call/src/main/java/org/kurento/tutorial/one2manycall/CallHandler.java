@@ -53,6 +53,8 @@ public class CallHandler extends TextWebSocketHandler {
   private final ConcurrentHashMap<String, ConcurrentHashMap<String, UserSession>> rooms = new ConcurrentHashMap<>();
   private final ConcurrentHashMap<String, MediaPipeline> pipelines = new ConcurrentHashMap<>();
 
+  private static final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
   @Autowired
   private KurentoClient kurento;
 
@@ -100,12 +102,10 @@ public class CallHandler extends TextWebSocketHandler {
           if (presenterUserSession.getSession() == session) {
             user = presenterUserSession;
           } else {
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             System.out.print("joinId : ");
             String presenterId = br.readLine();
             ConcurrentHashMap<String, UserSession> viewers = rooms.get(presenterId);
             user = viewers.get(session.getId());
-            br.close();
           }
         }
         if (user != null) {
@@ -224,15 +224,11 @@ public class CallHandler extends TextWebSocketHandler {
    */
   private synchronized void viewer(final WebSocketSession session, JsonObject jsonMessage)
       throws IOException {
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-
     // joinId 추출
     System.out.print("joinId : ");
     String joinId = br.readLine();//jsonMessage.get("joinId").getAsString();
     // 참가하고 싶은 presenterSession 추출
     UserSession presenterUserSession = presenters.get(joinId);
-    br.close();
     // 보려는 presenter가 없을 때
     if (presenterUserSession == null || presenterUserSession.getWebRtcEndpoint() == null) {
       JsonObject response = new JsonObject();
@@ -304,7 +300,6 @@ public class CallHandler extends TextWebSocketHandler {
    * =================================================
    */
   private synchronized void stop(WebSocketSession session) throws IOException {
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     // joinId 추출
     System.out.print("joinId : ");
     String joinId = br.readLine();//jsonMessage.get("joinId").getAsString();
@@ -353,7 +348,6 @@ public class CallHandler extends TextWebSocketHandler {
         }
       }
     }
-    br.close();
   }
 
   /* afterConnectionClosed
